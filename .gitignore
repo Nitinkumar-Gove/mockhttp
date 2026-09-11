@@ -1,3 +1,18 @@
-/target
-/.settings
+# Build output
+target/
+
+# Eclipse IDE
+.classpath
+.project
+.settings/
+
+# IntelliJ / VS Code
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# OS generated files
 .DS_Store
+Thumbs.db
