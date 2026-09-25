@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.mockhttp.exceptions.InvalidStatusCodeException;
 import com.api.mockhttp.models.MockRequest;
 import com.api.mockhttp.models.MockResponse;
 import com.api.mockhttp.services.MockResponseService;
@@ -27,9 +28,20 @@ public class MockhttpController {
 	public ResponseEntity<MockResponse> mockHttpCode(@PathVariable int statusCode,
 			@RequestParam(required = false) String message, @RequestParam(required = false) Long delayMs) {
 
+		validateHttpStatusCode(statusCode);
+		
 		MockRequest request = new MockRequest(statusCode, message, delayMs);
 
 		return strategies.stream().filter(s -> s.supports(request)).findFirst()
 				.orElseThrow(() -> new IllegalStateException("No strategy matched request")).execute(request);
+	}
+	
+	private void validateHttpStatusCode(int statusCode) {
+		try {
+			HttpStatus.valueOf(statusCode);
+		}
+		catch(IllegalArgumentException e) {
+			throw new InvalidStatusCodeException(statusCode);
+		}
 	}
 }
