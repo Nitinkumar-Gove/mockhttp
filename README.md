@@ -160,44 +160,6 @@ docker run -p 8080:8080 mockhttp
 
 ---
 
-## 🏗️ Architecture
-
-`mockhttp` is built on Spring Boot using an extensible **Strategy Pattern**:
-
-```
-Client Request ──► MockhttpController ──► MockStrategy Resolution
-                                                 │
-                      ┌──────────────────────────┴──────────────────────────┐
-                      ▼                                                     ▼
-             DelayedMockStrategy                                   SimpleMockStrategy
-        (Handles ?delayMs requests)                                (Handles standard requests)
-                      │                                                     │
-                      └──────────────────────────┬──────────────────────────┘
-                                                 ▼
-                                        MockResponseService
-                                    (Constructs JSON response)
-```
-
-* **`MockStrategy`**: Interface defining strategy support and execution.
-* **`SimpleMockStrategy`**: Standard response generation for immediate status code mocking.
-* **`DelayedMockStrategy`**: Handles simulated network latency delays.
-* **`GlobalExceptionHandler`**: Translates validation exceptions (`InvalidStatusCodeException`, `MethodArgumentTypeMismatchException`) into clean JSON responses.
-
----
-
-## 🗺️ Roadmap & Upcoming Features
-
-Active development is underway for future capabilities tracked on our [GitHub Issues](https://github.com/Nitinkumar-Gove/mockhttp/issues):
-- [ ] Support for all HTTP methods (`POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, `OPTIONS`) ([#13](https://github.com/Nitinkumar-Gove/mockhttp/issues/13))
-- [ ] Custom response headers and cookies ([#14](https://github.com/Nitinkumar-Gove/mockhttp/issues/14))
-- [ ] Custom response body payloads and content types ([#15](https://github.com/Nitinkumar-Gove/mockhttp/issues/15))
-- [ ] Random latency jitter and chaos failure simulation ([#16](https://github.com/Nitinkumar-Gove/mockhttp/issues/16))
-- [ ] Request echo and inspection endpoint (`/inspect`) ([#17](https://github.com/Nitinkumar-Gove/mockhttp/issues/17))
-- [ ] Redirect chain simulations (`/redirect/{n}`) ([#18](https://github.com/Nitinkumar-Gove/mockhttp/issues/18))
-- [ ] Interactive Swagger UI / OpenAPI documentation ([#26](https://github.com/Nitinkumar-Gove/mockhttp/issues/26))
-
----
-
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
