@@ -24,7 +24,7 @@ public class MockhttpController {
 		this.strategies = strategies;
 	}
 
-	@GetMapping("/mock/{statusCode}")
+	@GetMapping("/status/{statusCode}")
 	public ResponseEntity<MockResponse> mockHttpCode(@PathVariable int statusCode,
 			@RequestParam(required = false) String message, @RequestParam(required = false) Long delayMs) {
 
