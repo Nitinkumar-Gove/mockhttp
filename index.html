@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>mockhttp | Interactive API Playground</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
+  <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5/favicon-32x32.png" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .topbar {
+      display: none;
+    }
+    .brand-banner {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+    }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge {
+      background: #10b981;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .brand-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+    .brand-links a:hover {
+      color: #38bdf8;
+    }
+    .swagger-ui .info {
+      margin: 25px 0 10px 0;
+    }
+    .swagger-ui .info .title {
+      font-size: 2rem;
+      color: #0f172a;
+    }
+    .swagger-ui .info p {
+      color: #475569;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="brand-banner">
+    <div class="brand-title">
+      <span>mockhttp</span>
+      <span class="badge">Live API</span>
+    </div>
+    <nav class="brand-links">
+      <a href="https://mockhttp.onrender.com/status/200" target="_blank" rel="noopener">Live Endpoint ↗</a>
+      <a href="https://github.com/Nitinkumar-Gove/mockhttp" target="_blank" rel="noopener">GitHub Repository ↗</a>
+    </nav>
+  </header>
+
+  <div id="swagger-ui"></div>
+
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js" crossorigin></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js" crossorigin></script>
+  <script>
+    window.onload = () => {
+      window.ui = SwaggerUIBundle({
+        spec: {
+          openapi: "3.0.3",
+          info: {
+            title: "mockhttp API",
+            version: "1.0.0",
+            description: "A lightweight live API to simulate HTTP status codes, custom messages, and network latency delays. Try endpoints live below directly against the hosted API on Render."
+          },
+          servers: [
+            {
+              url: "https://mockhttp.onrender.com",
+              description: "Production Server (Render)"
+            },
+            {
+              url: "http://localhost:8080",
+              description: "Local Development Server"
+            }
+          ],
+          paths: {
+            "/status/{statusCode}": {
+              get: {
+                tags: ["Status Mocking"],
+                summary: "Mock an HTTP response code",
+                description: "Returns an HTTP response matching the given status code with optional custom message and simulated delay.",
+                operationId: "mockHttpStatus",
+                parameters: [
+                  {
+                    name: "statusCode",
+                    in: "path",
+                    required: true,
+                    description: "Standard HTTP status code (100–599)",
+                    schema: {
+                      type: "integer",
+                      example: 200
+                    }
+                  },
+                  {
+                    name: "message",
+                    in: "query",
+                    required: false,
+                    description: "Optional custom message or error description to return in the JSON payload",
+                    schema: {
+                      type: "string",
+                      example: "Operation completed successfully"
+                    }
+                  },
+                  {
+                    name: "delayMs",
+                    in: "query",
+                    required: false,
+                    description: "Optional delay in milliseconds before returning response (test latency & timeouts)",
+                    schema: {
+                      type: "integer",
+                      example: 500
+                    }
+                  }
+                ],
+                responses: {
+                  "200": {
+                    description: "Mocked success response",
+                    content: {
+                      "application/json": {
+                        schema: {
+                          type: "object",
+                          properties: {
+                            message: {
+                              type: "string",
+                              example: "Mocked response for status 200"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "400": {
+                    description: "Bad Request (e.g. invalid status code or non-numeric parameter)",
+                    content: {
+                      "application/json": {
+                        schema: {
+                          type: "object",
+                          properties: {
+                            error: {
+                              type: "string",
+                              example: "Invalid HTTP status code: 999"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "404": {
+                    description: "Mocked client error response",
+                    content: {
+                      "application/json": {
+                        schema: {
+                          type: "object",
+                          properties: {
+                            error: {
+                              type: "string",
+                              example: "Mocked response for status 404"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "500": {
+                    description: "Mocked server error response",
+                    content: {
+                      "application/json": {
+                        schema: {
+                          type: "object",
+                          properties: {
+                            error: {
+                              type: "string",
+                              example: "Mocked response for status 500"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIStandalonePreset
+        ],
+        layout: "BaseLayout",
+        tryItOutEnabled: true,
+        displayRequestDuration: true,
+        docExpansion: "full",
+        defaultModelsExpandDepth: -1
+      });
+    };
+  </script>
+</body>
+</html>
