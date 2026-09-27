@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>mockhttp | Interactive API Playground</title>
   
-  <!-- Font as on nitinkumargove.com -->
+  <!-- Inline theme initializer to prevent flash of wrong theme -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('mockhttp_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <!-- Typography matching nitinkumargove.com -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,7 +22,8 @@
   <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5/favicon-32x32.png" />
   
   <style>
-    :root {
+    /* Dark Theme (Default) */
+    :root, [data-theme="dark"] {
       --bg: #1c1714;
       --bg-card: #211d19;
       --bg-input: #2a2520;
@@ -23,12 +32,39 @@
       --fg-muted: #9e9a93;
       --border: #3d3830;
       --link: #d4775a;
-      --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
-      --font-mono: "Geist Mono", "SFMono-Regular", "Consolas", monospace;
+      --btn-toggle-bg: #2a2520;
+      --btn-toggle-border: #3d3830;
+      --btn-toggle-color: #f0ede6;
+      --opblock-get-border: rgba(46, 204, 113, 0.35);
+      --opblock-get-bg: rgba(46, 204, 113, 0.04);
+      --badge-bg: rgba(46, 204, 113, 0.15);
+      --badge-border: rgba(46, 204, 113, 0.4);
+      --badge-color: #2ecc71;
+    }
+
+    /* Light Theme as on nitinkumargove.com */
+    [data-theme="light"] {
+      --bg: #f4f3ee;
+      --bg-card: #eceae3;
+      --bg-input: #ffffff;
+      --bg-code: #e5e2d9;
+      --fg: #1c1714;
+      --fg-muted: #7a756e;
+      --border: #d9d7cf;
+      --link: #c15f3c;
+      --btn-toggle-bg: #eceae3;
+      --btn-toggle-border: #d9d7cf;
+      --btn-toggle-color: #1c1714;
+      --opblock-get-border: rgba(39, 174, 96, 0.45);
+      --opblock-get-bg: rgba(39, 174, 96, 0.08);
+      --badge-bg: rgba(39, 174, 96, 0.15);
+      --badge-border: rgba(39, 174, 96, 0.45);
+      --badge-color: #27ae60;
     }
 
     * {
       box-sizing: border-box;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
 
     body, html {
@@ -36,7 +72,7 @@
       padding: 0;
       background-color: var(--bg);
       color: var(--fg);
-      font-family: var(--font-sans);
+      font-family: "Geist", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
@@ -48,12 +84,16 @@
     .brand-header-wrapper {
       border-bottom: 1px solid var(--border);
       background-color: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
     }
 
     .brand-header {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 18px 24px;
+      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -74,9 +114,9 @@
     }
 
     .badge-live {
-      background: rgba(46, 204, 113, 0.15);
-      border: 1px solid rgba(46, 204, 113, 0.4);
-      color: #2ecc71;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--badge-color);
       font-size: 0.72rem;
       font-weight: 600;
       padding: 3px 9px;
@@ -88,7 +128,7 @@
     .brand-nav {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 18px;
     }
 
     .brand-nav a {
@@ -103,6 +143,50 @@
       color: var(--link);
     }
 
+    /* Theme Toggle Button */
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--btn-toggle-bg);
+      border: 1px solid var(--btn-toggle-border);
+      color: var(--btn-toggle-color);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--link);
+      color: var(--link);
+    }
+
+    .theme-icon {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    [data-theme="dark"] .icon-moon {
+      display: none;
+    }
+
+    [data-theme="dark"] .icon-sun {
+      display: block;
+    }
+
+    [data-theme="light"] .icon-sun {
+      display: none;
+    }
+
+    [data-theme="light"] .icon-moon {
+      display: block;
+    }
+
     /* 1200px max width container */
     .swagger-container {
       max-width: 1200px;
@@ -110,10 +194,10 @@
       padding: 10px 24px 80px 24px;
     }
 
-    /* Swagger UI Theme matching nitinkumargove.com */
+    /* Swagger UI Theme matching active palette */
     .swagger-ui {
       color: var(--fg);
-      font-family: var(--font-sans);
+      font-family: "Geist", -apple-system, BlinkMacSystemFont, "Roboto", sans-serif;
     }
 
     .swagger-ui .info {
@@ -122,7 +206,7 @@
 
     .swagger-ui .info .title {
       color: var(--fg) !important;
-      font-family: var(--font-sans) !important;
+      font-family: inherit !important;
       font-weight: 700;
       font-size: 2.1rem;
       letter-spacing: -0.025em;
@@ -161,7 +245,7 @@
       color: var(--fg) !important;
       border: 1px solid var(--border) !important;
       border-radius: 6px;
-      font-family: var(--font-sans) !important;
+      font-family: inherit !important;
       font-size: 0.95rem;
       padding: 8px 12px;
       cursor: pointer;
@@ -172,14 +256,14 @@
       color: var(--fg) !important;
       border: 1px solid var(--border) !important;
       border-radius: 6px;
-      font-family: var(--font-mono) !important;
+      font-family: "Geist Mono", monospace !important;
       padding: 8px 12px;
     }
 
     .swagger-ui .opblock-tag {
       color: var(--fg) !important;
       border-bottom: 1px solid var(--border) !important;
-      font-family: var(--font-sans) !important;
+      font-family: inherit !important;
       font-size: 1.35rem;
       font-weight: 600;
       margin: 20px 0 12px 0;
@@ -201,8 +285,8 @@
     }
 
     .swagger-ui .opblock.opblock-get {
-      border-color: rgba(46, 204, 113, 0.35) !important;
-      background: rgba(46, 204, 113, 0.04) !important;
+      border-color: var(--opblock-get-border) !important;
+      background: var(--opblock-get-bg) !important;
     }
 
     .swagger-ui .opblock .opblock-summary {
@@ -218,14 +302,14 @@
 
     .swagger-ui .opblock .opblock-summary-path {
       color: var(--fg) !important;
-      font-family: var(--font-mono) !important;
+      font-family: "Geist Mono", monospace !important;
       font-size: 1.05rem;
       font-weight: 600;
     }
 
     .swagger-ui .opblock .opblock-summary-description {
       color: var(--fg-muted) !important;
-      font-family: var(--font-sans) !important;
+      font-family: inherit !important;
     }
 
     .swagger-ui .opblock-body {
@@ -243,24 +327,24 @@
 
     .swagger-ui .opblock-section-header h4 {
       color: var(--fg) !important;
-      font-family: var(--font-sans) !important;
+      font-family: inherit !important;
       font-size: 0.95rem;
       font-weight: 600;
     }
 
     .swagger-ui .parameter__name {
       color: var(--fg) !important;
-      font-family: var(--font-mono) !important;
+      font-family: "Geist Mono", monospace !important;
       font-weight: 600;
     }
 
     .swagger-ui .parameter__type {
       color: var(--fg-muted) !important;
-      font-family: var(--font-mono) !important;
+      font-family: "Geist Mono", monospace !important;
     }
 
     .swagger-ui .parameter__in {
-      color: #7a756e !important;
+      color: var(--fg-muted) !important;
     }
 
     .swagger-ui .parameter__extension,
@@ -272,7 +356,7 @@
     .swagger-ui table thead tr th {
       color: var(--fg-muted) !important;
       border-bottom: 1px solid var(--border) !important;
-      font-family: var(--font-sans) !important;
+      font-family: inherit !important;
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -280,7 +364,7 @@
 
     .swagger-ui .tabli button {
       color: var(--fg-muted) !important;
-      font-family: var(--font-sans) !important;
+      font-family: inherit !important;
     }
 
     .swagger-ui .tabli.active button {
@@ -322,12 +406,12 @@
 
     .swagger-ui .response-col_status {
       color: var(--fg) !important;
-      font-family: var(--font-mono) !important;
+      font-family: "Geist Mono", monospace !important;
       font-weight: 600;
     }
 
     .swagger-ui .response-col_description {
-      color: #e5e0d8 !important;
+      color: var(--fg) !important;
     }
 
     .swagger-ui .response-col_links {
@@ -346,7 +430,7 @@
       color: var(--fg) !important;
       border: 1px solid var(--border) !important;
       border-radius: 6px;
-      font-family: var(--font-mono) !important;
+      font-family: "Geist Mono", monospace !important;
     }
 
     .swagger-ui .copy-to-clipboard button {
@@ -357,12 +441,12 @@
 
     .swagger-ui .response__duration {
       color: #2ecc71 !important;
-      font-family: var(--font-mono) !important;
+      font-family: "Geist Mono", monospace !important;
       font-weight: 600;
     }
 
     .swagger-ui .renderedMarkdown p {
-      color: #e5e0d8 !important;
+      color: var(--fg) !important;
     }
   </style>
 </head>
@@ -376,6 +460,11 @@
       <nav class="brand-nav">
         <a href="https://mockhttp.onrender.com/status/200" target="_blank" rel="noopener">Live Endpoint ↗</a>
         <a href="https://github.com/Nitinkumar-Gove/mockhttp" target="_blank" rel="noopener">GitHub Repository ↗</a>
+        <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle theme" title="Toggle light/dark theme">
+          <svg class="theme-icon icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="theme-icon icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <span id="theme-toggle-text">Light</span>
+        </button>
       </nav>
     </header>
   </div>
@@ -387,7 +476,30 @@
   <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js" crossorigin></script>
   <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js" crossorigin></script>
   <script>
+    // Theme toggle interaction
+    const initThemeToggle = () => {
+      const toggleBtn = document.getElementById('theme-toggle');
+      const labelText = document.getElementById('theme-toggle-text');
+
+      const applyTheme = (theme) => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('mockhttp_theme', theme);
+        labelText.textContent = theme === 'dark' ? 'Light' : 'Dark';
+      };
+
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      labelText.textContent = currentTheme === 'dark' ? 'Light' : 'Dark';
+
+      toggleBtn.addEventListener('click', () => {
+        const active = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = active === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+    };
+
     window.onload = () => {
+      initThemeToggle();
+
       window.ui = SwaggerUIBundle({
         spec: {
           openapi: "3.0.3",
