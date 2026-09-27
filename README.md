@@ -3,10 +3,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Java: 17+](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/)
 [![Live API](https://img.shields.io/badge/Live%20API-Online-success.svg)](https://mockhttp.onrender.com/status/200)
+[![Playground](https://img.shields.io/badge/Playground-Swagger%20UI-brightgreen.svg)](https://nitinkumar-gove.github.io/mockhttp/)
 
 A lightweight API to mock real-world HTTP response codes, custom messages, and latency delays over a live public endpoint.
 
-**Live Base URL**: `https://mockhttp.onrender.com`
+**Live Base URL**: `https://mockhttp.onrender.com`  
+**Interactive Playground**: [https://nitinkumar-gove.github.io/mockhttp/](https://nitinkumar-gove.github.io/mockhttp/)
 
 ## API Reference
 

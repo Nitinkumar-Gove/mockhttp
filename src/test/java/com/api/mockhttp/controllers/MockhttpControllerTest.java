@@ -62,4 +62,11 @@ class MockhttpControllerTest {
         long elapsed = System.currentTimeMillis() - start;
         assertTrue(elapsed >= 300, "Expected at least 300ms delay, got " + elapsed);
     }
+
+    @Test
+    void returnsCorsHeadersWhenOriginProvided() throws Exception {
+        mockMvc.perform(get("/status/200").header("Origin", "https://nitinkumar-gove.github.io"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "*"));
+    }
 }
