@@ -4,86 +4,385 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>mockhttp | Interactive API Playground</title>
+  
+  <!-- Font as on nitinkumargove.com -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
   <link rel="icon" type="image/png" href="https://unpkg.com/swagger-ui-dist@5/favicon-32x32.png" />
+  
   <style>
-    body {
+    :root {
+      --bg: #1c1714;
+      --bg-card: #211d19;
+      --bg-input: #2a2520;
+      --bg-code: #151210;
+      --fg: #f0ede6;
+      --fg-muted: #9e9a93;
+      --border: #3d3830;
+      --link: #d4775a;
+      --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+      --font-mono: "Geist Mono", "SFMono-Regular", "Consolas", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
       margin: 0;
       padding: 0;
-      background: #f8fafc;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+
     .topbar {
-      display: none;
+      display: none !important;
     }
-    .brand-banner {
-      background: #0f172a;
-      color: #f8fafc;
-      padding: 16px 24px;
+
+    .brand-header-wrapper {
+      border-bottom: 1px solid var(--border);
+      background-color: var(--bg);
+    }
+
+    .brand-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #1e293b;
     }
+
     .brand-title {
       font-size: 1.15rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      letter-spacing: -0.02em;
     }
-    .badge {
-      background: #10b981;
-      color: #ffffff;
+
+    .brand-title a {
+      color: var(--fg);
+      text-decoration: none;
+    }
+
+    .badge-live {
+      background: rgba(46, 204, 113, 0.15);
+      border: 1px solid rgba(46, 204, 113, 0.4);
+      color: #2ecc71;
       font-size: 0.72rem;
       font-weight: 600;
-      padding: 2px 8px;
+      padding: 3px 9px;
       border-radius: 9999px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
-    .brand-links {
+
+    .brand-nav {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 20px;
     }
-    .brand-links a {
-      color: #94a3b8;
+
+    .brand-nav a {
+      color: var(--fg-muted);
       text-decoration: none;
       font-size: 0.9rem;
       font-weight: 500;
       transition: color 0.15s ease;
     }
-    .brand-links a:hover {
-      color: #38bdf8;
+
+    .brand-nav a:hover {
+      color: var(--link);
     }
+
+    /* 1200px max width container */
+    .swagger-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 24px 80px 24px;
+    }
+
+    /* Swagger UI Theme matching nitinkumargove.com */
+    .swagger-ui {
+      color: var(--fg);
+      font-family: var(--font-sans);
+    }
+
     .swagger-ui .info {
-      margin: 25px 0 10px 0;
+      margin: 28px 0 16px 0;
     }
+
     .swagger-ui .info .title {
-      font-size: 2rem;
-      color: #0f172a;
+      color: var(--fg) !important;
+      font-family: var(--font-sans) !important;
+      font-weight: 700;
+      font-size: 2.1rem;
+      letter-spacing: -0.025em;
     }
-    .swagger-ui .info p {
-      color: #475569;
-      font-size: 1rem;
+
+    .swagger-ui .info p,
+    .swagger-ui .info li {
+      color: var(--fg-muted) !important;
+      font-size: 1.05rem;
+      line-height: 1.65;
+    }
+
+    .swagger-ui .info a {
+      color: var(--link) !important;
+    }
+
+    .swagger-ui .scheme-container {
+      background: var(--bg-card) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px;
+      box-shadow: none !important;
+      margin: 20px 0 30px 0;
+      padding: 16px 20px;
+    }
+
+    .swagger-ui .scheme-container label {
+      color: var(--fg-muted) !important;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .swagger-ui select {
+      background-color: var(--bg-input) !important;
+      color: var(--fg) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 6px;
+      font-family: var(--font-sans) !important;
+      font-size: 0.95rem;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .swagger-ui input[type="text"] {
+      background-color: var(--bg-input) !important;
+      color: var(--fg) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 6px;
+      font-family: var(--font-mono) !important;
+      padding: 8px 12px;
+    }
+
+    .swagger-ui .opblock-tag {
+      color: var(--fg) !important;
+      border-bottom: 1px solid var(--border) !important;
+      font-family: var(--font-sans) !important;
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 20px 0 12px 0;
+      padding-bottom: 8px;
+    }
+
+    .swagger-ui .opblock-tag small {
+      color: var(--fg-muted) !important;
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+
+    .swagger-ui .opblock {
+      background: var(--bg-card) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px;
+      box-shadow: none !important;
+      margin-bottom: 18px;
+    }
+
+    .swagger-ui .opblock.opblock-get {
+      border-color: rgba(46, 204, 113, 0.35) !important;
+      background: rgba(46, 204, 113, 0.04) !important;
+    }
+
+    .swagger-ui .opblock .opblock-summary {
+      border-color: var(--border) !important;
+      padding: 10px 16px;
+    }
+
+    .swagger-ui .opblock .opblock-summary-method {
+      background: #2ecc71 !important;
+      border-radius: 5px;
+      font-weight: 700;
+    }
+
+    .swagger-ui .opblock .opblock-summary-path {
+      color: var(--fg) !important;
+      font-family: var(--font-mono) !important;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .swagger-ui .opblock .opblock-summary-description {
+      color: var(--fg-muted) !important;
+      font-family: var(--font-sans) !important;
+    }
+
+    .swagger-ui .opblock-body {
+      background: var(--bg) !important;
+      border-top: 1px solid var(--border);
+      padding: 20px;
+    }
+
+    .swagger-ui .opblock-section-header {
+      background: var(--bg-card) !important;
+      border-bottom: 1px solid var(--border);
+      box-shadow: none !important;
+      padding: 8px 12px;
+    }
+
+    .swagger-ui .opblock-section-header h4 {
+      color: var(--fg) !important;
+      font-family: var(--font-sans) !important;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .swagger-ui .parameter__name {
+      color: var(--fg) !important;
+      font-family: var(--font-mono) !important;
+      font-weight: 600;
+    }
+
+    .swagger-ui .parameter__type {
+      color: var(--fg-muted) !important;
+      font-family: var(--font-mono) !important;
+    }
+
+    .swagger-ui .parameter__in {
+      color: #7a756e !important;
+    }
+
+    .swagger-ui .parameter__extension,
+    .swagger-ui .parameter__deprecated {
+      color: var(--fg-muted) !important;
+    }
+
+    .swagger-ui table thead tr td,
+    .swagger-ui table thead tr th {
+      color: var(--fg-muted) !important;
+      border-bottom: 1px solid var(--border) !important;
+      font-family: var(--font-sans) !important;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .swagger-ui .tabli button {
+      color: var(--fg-muted) !important;
+      font-family: var(--font-sans) !important;
+    }
+
+    .swagger-ui .tabli.active button {
+      color: var(--link) !important;
+      font-weight: 600;
+    }
+
+    .swagger-ui .btn.execute {
+      background-color: var(--link) !important;
+      border-color: var(--link) !important;
+      color: #ffffff !important;
+      border-radius: 6px;
+      font-weight: 600;
+      padding: 9px 28px;
+      transition: opacity 0.15s ease;
+    }
+
+    .swagger-ui .btn.execute:hover {
+      opacity: 0.9;
+    }
+
+    .swagger-ui .btn.btn-clear,
+    .swagger-ui .btn.try-out__btn {
+      background: var(--bg-input) !important;
+      border: 1px solid var(--border) !important;
+      color: var(--fg) !important;
+      border-radius: 6px;
+    }
+
+    .swagger-ui .responses-inner {
+      background: transparent !important;
+    }
+
+    .swagger-ui .responses-table th,
+    .swagger-ui .responses-table td {
+      color: var(--fg) !important;
+      border-bottom: 1px solid var(--border) !important;
+    }
+
+    .swagger-ui .response-col_status {
+      color: var(--fg) !important;
+      font-family: var(--font-mono) !important;
+      font-weight: 600;
+    }
+
+    .swagger-ui .response-col_description {
+      color: #e5e0d8 !important;
+    }
+
+    .swagger-ui .response-col_links {
+      color: var(--fg-muted) !important;
+    }
+
+    .swagger-ui .response-control-media-type__title {
+      color: var(--fg-muted) !important;
+    }
+
+    .swagger-ui pre,
+    .swagger-ui code,
+    .swagger-ui .microlight,
+    .swagger-ui .highlight-code pre {
+      background: var(--bg-code) !important;
+      color: var(--fg) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 6px;
+      font-family: var(--font-mono) !important;
+    }
+
+    .swagger-ui .copy-to-clipboard button {
+      background: var(--bg-input) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 4px;
+    }
+
+    .swagger-ui .response__duration {
+      color: #2ecc71 !important;
+      font-family: var(--font-mono) !important;
+      font-weight: 600;
+    }
+
+    .swagger-ui .renderedMarkdown p {
+      color: #e5e0d8 !important;
     }
   </style>
 </head>
 <body>
-  <header class="brand-banner">
-    <div class="brand-title">
-      <span>mockhttp</span>
-      <span class="badge">Live API</span>
-    </div>
-    <nav class="brand-links">
-      <a href="https://mockhttp.onrender.com/status/200" target="_blank" rel="noopener">Live Endpoint ↗</a>
-      <a href="https://github.com/Nitinkumar-Gove/mockhttp" target="_blank" rel="noopener">GitHub Repository ↗</a>
-    </nav>
-  </header>
+  <div class="brand-header-wrapper">
+    <header class="brand-header">
+      <div class="brand-title">
+        <a href="https://nitinkumar-gove.github.io/mockhttp/">mockhttp</a>
+        <span class="badge-live">Live API</span>
+      </div>
+      <nav class="brand-nav">
+        <a href="https://mockhttp.onrender.com/status/200" target="_blank" rel="noopener">Live Endpoint ↗</a>
+        <a href="https://github.com/Nitinkumar-Gove/mockhttp" target="_blank" rel="noopener">GitHub Repository ↗</a>
+      </nav>
+    </header>
+  </div>
 
-  <div id="swagger-ui"></div>
+  <main class="swagger-container">
+    <div id="swagger-ui"></div>
+  </main>
 
   <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js" crossorigin></script>
   <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js" crossorigin></script>
@@ -95,7 +394,7 @@
           info: {
             title: "mockhttp API",
             version: "1.0.0",
-            description: "A lightweight live API to simulate HTTP status codes, custom messages, and network latency delays. Try endpoints live below directly against the hosted API on Render."
+            description: "A lightweight live API to simulate HTTP status codes, custom messages, and network latency delays. Test endpoints interactively below against the hosted API on Render."
           },
           servers: [
             {

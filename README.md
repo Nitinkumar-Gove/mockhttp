@@ -7,84 +7,23 @@
 
 A lightweight API to mock real-world HTTP response codes, custom messages, and latency delays over a live public endpoint.
 
-**Live Base URL**: `https://mockhttp.onrender.com`  
-**Interactive Playground**: [https://nitinkumar-gove.github.io/mockhttp/](https://nitinkumar-gove.github.io/mockhttp/)
+## 🚀 Try the Live API
 
-## API Reference
+Test all supported endpoints, parameters, and simulated delays interactively directly in your browser:
 
-### `GET /status/{statusCode}`
+👉 **[https://nitinkumar-gove.github.io/mockhttp/](https://nitinkumar-gove.github.io/mockhttp/)**
 
-Returns an HTTP response matching `{statusCode}` with optional custom messages and response delays.
+The interactive playground is powered by Swagger UI and connects directly to the live service at `https://mockhttp.onrender.com`.
 
-#### Parameters
+### Quick cURL
 
-| Parameter | In | Type | Required | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `statusCode` | path | integer | Yes | HTTP status code (`100`–`599`) |
-| `message` | query | string | No | Custom message or error text in payload |
-| `delayMs` | query | long | No | Delay in milliseconds before returning response |
-
-#### Examples
-
-**Basic Status Code**
 ```bash
+# Basic status code
 curl -i https://mockhttp.onrender.com/status/200
-```
-```json
-{
-  "message": "Mocked response for status 200"
-}
-```
 
-**Custom Message & Error Status**
-```bash
+# Custom message
 curl -i "https://mockhttp.onrender.com/status/404?message=User+not+found"
-```
-```json
-{
-  "error": "User not found"
-}
-```
 
-**Simulate Latency Delay**
-```bash
+# Latency delay (ms)
 curl -i "https://mockhttp.onrender.com/status/503?delayMs=1000"
 ```
-```json
-{
-  "error": "Mocked response for status 503"
-}
-```
-
-**Validation Error**
-```bash
-curl -i https://mockhttp.onrender.com/status/999
-```
-```json
-{
-  "error": "Invalid HTTP status code: 999"
-}
-```
-
-## Local Development
-
-### Run with Maven
-```bash
-./mvnw spring-boot:run
-```
-Available locally at `http://localhost:8080/status/{statusCode}`.
-
-### Run Tests
-```bash
-./mvnw test
-```
-
-### Run with Docker
-```bash
-docker build -t mockhttp .
-docker run -p 8080:8080 mockhttp
-```
-
-## License
-
-[MIT](LICENSE)
