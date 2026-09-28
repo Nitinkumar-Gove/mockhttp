@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.mockhttp.configs.MockHttpProperties;
+import com.api.mockhttp.exceptions.InvalidDelayException;
 import com.api.mockhttp.exceptions.InvalidStatusCodeException;
 import com.api.mockhttp.models.MockRequest;
 import com.api.mockhttp.models.MockResponse;
@@ -21,9 +23,11 @@ import com.api.mockhttp.strategies.MockStrategy;
 public class MockhttpController {
 
 	private final List<MockStrategy> strategies;
+	private final MockHttpProperties properties;
 
-	public MockhttpController(List<MockStrategy> strategies) {
+	public MockhttpController(List<MockStrategy> strategies, MockHttpProperties properties) {
 		this.strategies = strategies;
+		this.properties = properties;
 	}
 
 	@GetMapping("/status/{statusCode}")
@@ -31,6 +35,7 @@ public class MockhttpController {
 			@RequestParam(required = false) String message, @RequestParam(required = false) Long delayMs) {
 
 		validateHttpStatusCode(statusCode);
+		validateDelay(delayMs);
 		
 		MockRequest request = new MockRequest(statusCode, message, delayMs);
 
@@ -45,5 +50,11 @@ public class MockhttpController {
 		catch(IllegalArgumentException e) {
 			throw new InvalidStatusCodeException(statusCode);
 		}
+	}
+	
+	private void validateDelay(Long delayMs) {
+	    if (delayMs != null && delayMs > properties.maxDelayMs()) {
+	        throw new InvalidDelayException(delayMs, properties.maxDelayMs());
+	    }
 	}
 }
