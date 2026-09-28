@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MockResponse(null,
 				"No matching endpoint found for " + ex.getHttpMethod() + " " + ex.getRequestURL()));
 	}
+	
+	@ExceptionHandler(InvalidDelayException.class)
+	public ResponseEntity<MockResponse> handleInvalidDelay(InvalidDelayException ex) {
+	    return ResponseEntity.badRequest().body(new MockResponse(null, ex.getMessage()));
+	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<MockResponse> handleUnexpected(Exception ex) {
